@@ -2,6 +2,14 @@
 var app = {
   server: 'http://parse.hrr.hackreactor.com/chatterbox/classes/messages',
 
+  chatRooms: {},
+  chatRoom: 'lobby',
+
+  message: {
+    username: window.username,
+    text: null,
+    roomname: null
+  },
   /*
   ajax gets the messages
   messages are in object format
@@ -18,9 +26,9 @@ var app = {
   // display the messages somewhere in the DOM, specfically the body X
 
   // setInterval on app.fetch() to every x seconds X
-  // in our html page, create a chat container to display new messages
-  // create a for-loop to only display/render 10 or so messages at a time after fetch
-  // sort the order of the incoming data to retreive newest messages
+  // in our html page, create a chat container to display new messages X
+  // create a for-loop to only display/render 10 or so messages at a time after fetch /
+  // sort the order of the incoming data to retreive newest messages X
 
   // create a click handler to listen to clicks on username
   // if username is clicked, display that username's messages only
@@ -33,11 +41,18 @@ var app = {
 
   init: function() {
     console.log('init function');
-    app.send({username: 'francis', text: 'this is a random test', roomname: 'lobby'});
+    app.fetch();
+    // setInterval(function() {
+    //   app.fetch();
+    // }, 1000);
 
-    setInterval(function() {
-      app.fetch();
-    }, 1000);
+    $('#createRoomButton').on('click', function() {
+      var el = $('#createNewRoom');
+      var newRoomName = el;
+      chatRoom = newRoomName;
+      $el.val('');
+    });
+
   },
 
   send: function(message) {
@@ -67,34 +82,54 @@ var app = {
       // This is the url you should use to communicate with the parse API server.
       url: app.server,
       type: 'GET',
+      data: {'order': '-createdAt'},
       contentType: 'application/json',
       success: function (data) {
-        console.log('name : ', data.results[5].username);
-        console.log('roomname : ', data.results[5].roomname);
-        console.log('text : ', data.results[5].text);
+        console.log(data.results);
+        console.log('name : ', data.results[0].username);
+        console.log('roomname : ', data.results[0].roomname);
+        console.log('text : ', data.results[0].text);
         console.log('chatterbox: Message received');
-        $('body').append('<p>' + data.results[5].username + '</p>');
+        for (var i = 10; i < 25; i++) {
+          $('#chats').append('<p>' + data.results[i].username + ' ' + data.results[i].text + '</p>');
+        }
       },
       error: function (data) {
         // See: https://developer.mozilla.org/en-US/docs/Web/API/console.error
         console.error('chatterbox: Failed to receive message', data);
       }
     });
+  },
+
+  clearMessages: function() {
+    $('#chats').empty();
+  },
+
+  renderMessage: function(message) {
+    $('#chats').append('<p>Test</p>');
+  },
+
+  renderRoom: function(roomName) {
+    $('#roomSelect').append('<div id="' + roomName + '"></div>');
+  },
+
+  handleUserNameClick: function() {
+    $('.username').on('click', function() { console.log('Added a friend'); });
+  },
+
+  handleSubmit: function() {
+    console.log('submit button was clicked');
+    //grab text from text-input
+    app.message.text = $('.text-input').val();
+    //grab user name from searchbar, slice off ?username:
+    app.message.username = window.location.search.slice(10);
+    app.message.roomname =
+    app.send(app.message);
+  },
+
+  addRoom: function() {
+    var element = $('<div>');
+    $('#roomSelect').append(element);
   }
-};
 
-app.clearMessages = function() {
-  $('#chats').empty();
-};
-
-app.renderMessage = function() {
-  $('#chats').append('<p>Test</p>');
-};
-
-app.renderRoom = function(roomName) {
-  $('#roomSelect').append('<div id="' + roomName + '"></div>');
-};
-
-app.handleUserNameClick = function() {
-  $('.username').on('click', function() { console.log('Added a friend'); });
 };
