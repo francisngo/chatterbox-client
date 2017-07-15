@@ -1,5 +1,6 @@
 // YOUR CODE HERE:
 $(document).ready(function() {
+
   app.init();
 
   $('#createNewRoom').on('submit', function(event) {
@@ -16,16 +17,13 @@ $(document).ready(function() {
   $('#messageInput').on('submit', function(event) {
     event.preventDefault();
     app.handleSubmit();
-    $('#messageInput').val('');
+    $('.text-input').val('');
   });
 
 });
 
 var app = {
   server: 'http://parse.hrr.hackreactor.com/chatterbox/classes/messages',
-
-  chatRooms: [],
-  chatRoom: 'lobby',
 
   message: {
     username: window.username,
@@ -34,6 +32,9 @@ var app = {
   },
 
   friends: [],
+  chatRooms: [],
+  chatRoom: 'lobby',
+
   /*
   ajax gets the messages
   messages are in object format
@@ -64,11 +65,11 @@ var app = {
   */
 
   init: function() {
-    console.log('init function');
+    // console.log('init function');
     app.fetch();
-    // setInterval(function() {
-    //   app.fetch();
-    // }, 1000);
+    setInterval(function() {
+      app.fetch();
+    }, 10000);
   },
 
   send: function(message) {
@@ -93,7 +94,7 @@ var app = {
   fetch: function() {
     // console.log('fetch function');
     //use ajax to post message
-    console.log('fetching...');
+    // console.log('fetching...');
     $.ajax({
       // This is the url you should use to communicate with the parse API server.
       url: app.server,
@@ -101,14 +102,22 @@ var app = {
       data: {'order': '-createdAt'},
       contentType: 'application/json',
       success: function (data) {
-        console.log(data.results);
-        console.log('name : ', data.results[0].username);
-        console.log('roomname : ', data.results[0].roomname);
-        console.log('text : ', data.results[0].text);
+        var messages = [];
+        data.results.forEach(function(value) {
+          messages.push(value);
+        });
+        $('#chats').children('.message').remove();
+        messages.forEach(function(value) {
+          app.renderMessage(value);
+        });
+        // for (var i = 0; i < 10; i++) {
+        //   $('#chats').append('<div class="message"><a href="#" class="username">' + data.results[i].username + '</a>' + data.results[i].text + '</div>');
+        // }
+        // console.log(data.results);
+        // console.log('name : ', data.results[0].username);
+        // console.log('roomname : ', data.results[0].roomname);
+        // console.log('text : ', data.results[0].text);
         console.log('chatterbox: Message received');
-        for (var i = 10; i < 25; i++) {
-          $('#chats').append('<div class="message"><a href="#" class="username">' + data.results[i].username + '</a>' + data.results[i].text + '</div>');
-        }
       },
       error: function (data) {
         // See: https://developer.mozilla.org/en-US/docs/Web/API/console.error
@@ -129,12 +138,18 @@ var app = {
   },
 
   renderRoom: function(roomName) {
-    console.log('room rendered');
-    // $('#roomSelect').append('<div id="' + roomName + '"></div>');
+    // console.log('room rendered');
+    $('#roomSelect').append('<option>' + roomName + '</option>');
   },
 
+  /*
+  <option selected="selected">
+    lobby
+  </option>
+  */
+
   handleUsernameClick: function(event) {
-    console.log('added friend');
+    // console.log('added friend');
     var addFriend = $(event.target).text();
     app.friends.push(addFriend);
   },
@@ -145,21 +160,14 @@ var app = {
     app.message.text = $('.text-input').val();
     //grab user name from searchbar, slice off ?username
     app.message.username = window.location.search.slice(10);
-    app.message.roomname =
     app.send(app.message);
   },
 
   addRoom: function() {
-    console.log('room added');
-    var newRoomName = $('#createNewRoom').val();
+    // console.log('room added');
+    var newRoomName = $('.room-input').val();
     app.chatRooms.push(newRoomName);
-    $('#createNewRoom').val('');
-    app.renderRoom();
+    app.renderRoom(newRoomName);
+    // $('#createNewRoom').val('');
   }
-
 };
-
-
-/*
-app.chatRooms = ['newroom', 'newroom2']
-*/

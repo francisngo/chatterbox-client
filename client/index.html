@@ -24,32 +24,36 @@
     <script src="scripts/app.js"></script>
   </head>
   <body>
-    <div id="main">
-      <h1>chatterbox</h1>
-      <!-- Your HTML goes here! -->
-    </div>
-    <div id="chats">
-      <!-- jquery to append messages here -->
-    </div>
-    <form class="form-inline">
-      <div class="form-group">
-        <input type="text" class="form-control text-input" id="messageInput" placeholder="Message Room"/>
+    <div class="container">
+      <div id="main">
+        <h1>chatterbox</h1>
+        <!-- Your HTML goes here! -->
+        <div class="rooms">
+          Room:
+          <select id="roomSelect">
+            <option selected="selected">
+              lobby
+            </option>
+          </select>
+        </div>
       </div>
-      <button type="submit" class="btn btn-default">Send Message</button>
-    </form>
-    <script>
-      $(document).ready(function(){
-        app.init();
-
-        $('form').on('submit', function(event) {
-          event.preventDefault();
-          app.handleSubmit();
-          $('#messageInput').val('');
-        });
-
-        console.log(window.location.search.slice(10));
-
-      });
-    </script>
+      <div id="chats">
+        <!-- jquery to append messages here -->
+      </div>
+      <div id="forms">
+        <form id="createNewRoom" class="form-inline">
+          <div class="form-group">
+            <input type="text" class="form-control input-sm room-input" placeholder="New Room Name">
+          </div>
+          <button type="submit" class="btn btn-sm btn-default">Create Room</button>
+        </form>
+        <form id="messageInput" class="form-inline">
+          <div class="form-group">
+            <input type="text" class="form-control input-sm text-input" placeholder="Message Room"/>
+          </div>
+          <button type="submit" class="btn btn-sm btn-default">Send Message</button>
+        </form>
+      </div>
+    </div> <!-- container -->
   </body>
 </html>

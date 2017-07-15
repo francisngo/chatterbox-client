@@ -47,6 +47,7 @@ body {
 }
 
 form {
+    margin: 0 auto;
     padding: 20px;
     padding-left: 0;
     margin-bottom: 20px;
@@ -87,4 +88,3 @@ form input[type=text] {
     color: #fff;
     background-color: #0090da;
 }
-
