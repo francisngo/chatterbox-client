@@ -1,8 +1,30 @@
 // YOUR CODE HERE:
+$(document).ready(function() {
+  app.init();
+
+  $('#createNewRoom').on('submit', function(event) {
+    event.preventDefault();
+    console.log('create button clicked');
+    app.addRoom();
+  });
+
+  $('body').on('click', '.username', function(event) {
+    event.preventDefault();
+    app.handleUsernameClick(event);
+  });
+
+  $('#messageInput').on('submit', function(event) {
+    event.preventDefault();
+    app.handleSubmit();
+    $('#messageInput').val('');
+  });
+
+});
+
 var app = {
   server: 'http://parse.hrr.hackreactor.com/chatterbox/classes/messages',
 
-  chatRooms: {},
+  chatRooms: [],
   chatRoom: 'lobby',
 
   message: {
@@ -10,6 +32,8 @@ var app = {
     text: null,
     roomname: null
   },
+
+  friends: [],
   /*
   ajax gets the messages
   messages are in object format
@@ -30,10 +54,10 @@ var app = {
   // create a for-loop to only display/render 10 or so messages at a time after fetch /
   // sort the order of the incoming data to retreive newest messages X
 
-  // create a click handler to listen to clicks on username
-  // if username is clicked, display that username's messages only
-  // create a form input
-  // create a submit button to send messages from input
+  // create a click handler to listen to clicks on username X
+  // if username is clicked, add username to friends list X
+  // create a form input X
+  // create a submit button to send messages from input X
   // when sending message object => requires the user's name from prompt, message in form input, the room they submitted the message
   // create different rooms
 
@@ -45,14 +69,6 @@ var app = {
     // setInterval(function() {
     //   app.fetch();
     // }, 1000);
-
-    $('#createRoomButton').on('click', function() {
-      var el = $('#createNewRoom');
-      var newRoomName = el;
-      chatRoom = newRoomName;
-      $el.val('');
-    });
-
   },
 
   send: function(message) {
@@ -91,7 +107,7 @@ var app = {
         console.log('text : ', data.results[0].text);
         console.log('chatterbox: Message received');
         for (var i = 10; i < 25; i++) {
-          $('#chats').append('<p>' + data.results[i].username + ' ' + data.results[i].text + '</p>');
+          $('#chats').append('<div class="message"><a href="#" class="username">' + data.results[i].username + '</a>' + data.results[i].text + '</div>');
         }
       },
       error: function (data) {
@@ -106,30 +122,44 @@ var app = {
   },
 
   renderMessage: function(message) {
-    $('#chats').append('<p>Test</p>');
+    var username = message.username;
+    var text = message.text;
+
+    $('#chats').append('<div class="message"><a href="#" class="username">' + username + '</a> <div>' + text + '</div></div>');
   },
 
   renderRoom: function(roomName) {
-    $('#roomSelect').append('<div id="' + roomName + '"></div>');
+    console.log('room rendered');
+    // $('#roomSelect').append('<div id="' + roomName + '"></div>');
   },
 
-  handleUserNameClick: function() {
-    $('.username').on('click', function() { console.log('Added a friend'); });
+  handleUsernameClick: function(event) {
+    console.log('added friend');
+    var addFriend = $(event.target).text();
+    app.friends.push(addFriend);
   },
 
   handleSubmit: function() {
     console.log('submit button was clicked');
     //grab text from text-input
     app.message.text = $('.text-input').val();
-    //grab user name from searchbar, slice off ?username:
+    //grab user name from searchbar, slice off ?username
     app.message.username = window.location.search.slice(10);
     app.message.roomname =
     app.send(app.message);
   },
 
   addRoom: function() {
-    var element = $('<div>');
-    $('#roomSelect').append(element);
+    console.log('room added');
+    var newRoomName = $('#createNewRoom').val();
+    app.chatRooms.push(newRoomName);
+    $('#createNewRoom').val('');
+    app.renderRoom();
   }
 
 };
+
+
+/*
+app.chatRooms = ['newroom', 'newroom2']
+*/
