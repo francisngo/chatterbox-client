@@ -36,20 +36,20 @@
             </option>
           </select>
         </div>
+        <form id="createNewRoom" class="form-inline">
+          <div class="form-group">
+            <input type="text" class="room-input form-control input-sm" placeholder="New Room Name">
+          </div>
+          <button type="submit" class="btn btn-sm btn-default">Create Room</button>
+        </form>
       </div>
       <div id="chats">
         <!-- jquery to append messages here -->
       </div>
-      <div id="forms">
-        <form id="createNewRoom" class="form-inline">
-          <div class="form-group">
-            <input type="text" class="form-control input-sm room-input" placeholder="New Room Name">
-          </div>
-          <button type="submit" class="btn btn-sm btn-default">Create Room</button>
-        </form>
+      <div id="message-box">
         <form id="messageInput" class="form-inline">
           <div class="form-group">
-            <input type="text" class="form-control input-sm text-input" placeholder="Message Room"/>
+            <input type="text" class="text-input form-control input-sm" placeholder="Message Room"/>
           </div>
           <button type="submit" class="btn btn-sm btn-default">Send Message</button>
         </form>
