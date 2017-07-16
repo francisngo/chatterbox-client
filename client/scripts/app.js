@@ -102,24 +102,27 @@ var app = {
       contentType: 'application/json',
       success: function (data) {
         var messages = [];
-        // console.log(messages);
         data.results.forEach(function(data) {
-          var roomname = data.roomname;
 
-          //check our chatRooms array if data's roomname exist
-            //push the roomname into the chatRoom array
-            //append that roomname to the dropdown list
+          var message = {
+            createdAt: data.createdAt,
+            objectId: data.objectId,
+            roomname: data.roomname,
+            text: _.escape(data.text),
+            username: _.escape(data.username)
+          };
+
+          var roomname = _.escape(data.roomname);
 
           if (app.chatRooms.indexOf(roomname) === -1) {
             app.chatRooms.push(roomname);
             app.renderRoom(roomname);
           }
 
-          messages.push(data);
+          messages.push(message);
         });
 
         $('#chats').children('.message').remove();
-
         messages.forEach(function(data) {
           // console.log(data.roomname);
           if (data.roomname === $('#roomSelect option:selected').text()) {
@@ -141,8 +144,8 @@ var app = {
   },
 
   renderMessage: function(message) {
-    var username = message.username;
-    var text = message.text;
+    var username = _.escape(message.username);
+    var text = _.escape(message.text);
 
     $('#chats').append('<div class="message"><a href="#" class="username">' + username + '</a>: ' + text + '</div>');
   },
